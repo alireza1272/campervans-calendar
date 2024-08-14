@@ -12,16 +12,16 @@
       </span>
     </div>
 
-    <ul v-if="stationsStore.stations && query?.length > 0"
+    <ul v-if="suggestions"
         class="absolute w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto z-10">
       <li
-          v-for="(suggestion, index) in stationsStore.stations"
+          v-for="(suggestion, index) in suggestions"
           :key="index"
           @click="selectSuggestion(suggestion)"
           class="p-2 cursor-pointer">
         {{ suggestion.name }}
       </li>
-      <li v-show="stationsStore.stations?.length === 0" class="p-2 text-gray-500">
+      <li v-show="suggestions?.length === 0" class="p-2 text-gray-500">
         Oops! No station found.
       </li>
     </ul>
@@ -34,6 +34,12 @@ import {useStationsStore} from '../stores/stationsStore.ts';
 import {IStation} from '../types/IStation.ts';
 import {debounce} from '../utils/sharedUtils';
 
+defineProps({
+  suggestions: {
+    type: Array as () => IStation[],
+    default: () => []
+  }
+});
 const emit = defineEmits(['selectStation']);
 const query = ref('');
 const stationsStore = useStationsStore();
@@ -47,7 +53,6 @@ watch(query, (newQuery: string) => {
 });
 
 const selectSuggestion = (suggestion: IStation) => {
-  query.value = '';
   emit('selectStation', suggestion);
 };
 

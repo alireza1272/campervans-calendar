@@ -82,7 +82,7 @@ const selectDate = (modelData: Date) => {
           v-show="showStationSearch"
           class="bg-primary-green absolute top-0 right-0 w-full h-full z-1 flex gap-2 items-center justify-between
           lg:w-full lg:h-auto lg:rounded-lg lg:p-4">
-        <AutoComplete @selectStation="chooseSelection($event)"></AutoComplete>
+        <AutoComplete :suggestions="stationsStore?.stations" @selectStation="chooseSelection($event)"></AutoComplete>
         <span @click="showStationSearch=false">
           <svg fill="white" height="24px" viewBox="0 -960 960 960" width="24px" xmlns="http://www.w3.org/2000/svg">
           <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
