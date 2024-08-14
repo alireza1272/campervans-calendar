@@ -29,14 +29,16 @@
       ]
     },
     "types": [
-      "vite/client"
+      "vite/client",
+      "jest"
     ]
   },
   "include": [
     "src/**/*.ts",
+    "src/**/*.d.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
-    "vite.config.ts"
+    "tests/**/*.ts"
   ],
   "exclude": [
     "node_modules",

@@ -40,7 +40,7 @@ export const useStationsStore = defineStore('stationsStore', {
                  * Here to get the Date of first day of the week
                  * And then set other week days' Dates based on that.
                  */
-                let startOfWeek: Date | null = null;
+                let startOfWeek = null;
                 if (to == 'next') {
                     startOfWeek = this.stationCalendar?.start_date as Date;
                     startOfWeek.setDate(startOfWeek.getDate() + 7);
@@ -48,12 +48,12 @@ export const useStationsStore = defineStore('stationsStore', {
                     startOfWeek = this.stationCalendar?.start_date as Date;
                     startOfWeek.setDate(startOfWeek.getDate() - 7);
                 } else if (to === 'selected') {
-                    startOfWeek = new Date(selectedDate);
+                    startOfWeek = new Date(selectedDate as Date);
                     const dayOfWeek = startOfWeek.getDay();
                     const difference = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
                     startOfWeek.setDate(startOfWeek.getDate() + difference);
                 } else {
-                    startOfWeek = new Date(desiredDate);
+                    startOfWeek = new Date(desiredDate as Date);
                     const dayOfWeek = startOfWeek.getDay();
                     const difference = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
                     startOfWeek.setDate(startOfWeek.getDate() + difference);
@@ -86,6 +86,7 @@ export const useStationsStore = defineStore('stationsStore', {
                     days: weekDaysInfo,
                 };
             }
+            console.log('weekInfo', weekInfo)
             this.stationCalendar = weekInfo;
         },
         async fetchStations(query?: string) {

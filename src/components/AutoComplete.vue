@@ -12,7 +12,7 @@
       </span>
     </div>
 
-    <ul v-if="stationsStore.stations && query?.length > 0"
+    <ul v-if="stationsStore.stations"
         class="absolute w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto z-10">
       <li
           v-for="(suggestion, index) in stationsStore.stations"
@@ -47,7 +47,6 @@ watch(query, (newQuery: string) => {
 });
 
 const selectSuggestion = (suggestion: IStation) => {
-  query.value = '';
   emit('selectStation', suggestion);
 };
 
