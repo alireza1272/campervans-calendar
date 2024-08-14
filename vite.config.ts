@@ -7,6 +7,7 @@ export default defineConfig({
         port: 3000
     },
     plugins: [vue()],
+    base: '/campervans-calendar/',
     resolve: {
         alias: {
             '@': '/src',

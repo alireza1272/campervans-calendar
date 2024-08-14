@@ -5,7 +5,7 @@ import {IBookingsEntity, IStation} from '../types/IStation';
 import {BOOKING_TYPE} from '../utils/constants';
 import {ref} from 'vue';
 
-const showStationSearch = ref<boolean>(true);
+const showStationSearch = ref<boolean>(false);
 const stationsStore = useStationsStore();
 
 const chooseSelection = (station: IStation) => {
@@ -79,7 +79,7 @@ const selectDate = (modelData: Date) => {
         </span>
       </div>
       <div
-          v-show="showStationSearch"
+          v-show="showStationSearch || !stationsStore.selectedStation"
           class="bg-primary-green absolute top-0 right-0 w-full h-full z-1 flex gap-2 items-center justify-between
           lg:w-full lg:h-auto lg:rounded-lg lg:p-4">
         <AutoComplete :suggestions="stationsStore?.stations" @selectStation="chooseSelection($event)"></AutoComplete>

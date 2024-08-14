@@ -16,7 +16,7 @@ const routes: Array<RouteRecordRaw> = [
 ]
 
 const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHistory('/campervans-calendar/'), // Use the same base as in vite.config.ts
     routes,
 });
 
