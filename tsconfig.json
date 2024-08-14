@@ -8,7 +8,7 @@
       "DOM.Iterable"
     ],
     "moduleResolution": "node",
-    "allowImportingTsExtensions": false,
+    "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleDetection": "force",
     "strict": true,

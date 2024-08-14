@@ -1,9 +1,7 @@
-<script setup lang="ts">
-import Calendar from './views/Calendar.vue';
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <Calendar></Calendar>
+  <router-view/>
 </template>
 
 <style scoped>

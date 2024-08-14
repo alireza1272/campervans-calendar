@@ -1,4 +1,4 @@
-import {IStation} from './IStation.ts';
+import {IStation} from './IStation';
 import {IWeekInfo} from './IWeekDayInfo';
 
 export interface IStationsState {

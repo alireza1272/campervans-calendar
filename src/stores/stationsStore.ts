@@ -1,11 +1,11 @@
 import {defineStore} from 'pinia';
-import {IStationsState} from '../types/IStationsState.ts';
-import {IBookingsEntity, IStation} from '../types/IStation.ts';
-import {useFetchAPI} from '../composables/useFetchAPI.ts';
+import {IStationsState} from '../types/IStationsState';
+import {IBookingsEntity, IStation} from '../types/IStation';
 import {watch} from 'vue';
 import {IWeekDayInfo, IWeekInfo} from '../types/IWeekDayInfo';
 import {compareTwoDates, getWeekOrMonthName} from '../utils/calendatUtil';
 import {BOOKING_TYPE} from '../utils/constants';
+import {useFetchAPI} from '../composables/useFetchAPI';
 
 export const useStationsStore = defineStore('stationsStore', {
     state: (): IStationsState => ({
@@ -31,7 +31,7 @@ export const useStationsStore = defineStore('stationsStore', {
                 });
             }
         },
-        setStationCalendar(to?: 'prev' | 'next') {
+        setStationCalendar(to?: 'prev' | 'next' | 'selected', selectedDate?: Date) {
             let weekInfo: IWeekInfo | null = null;
             if (this.selectedStation?.bookings?.length) {
                 const weekDaysInfo: IWeekDayInfo[] = []
@@ -40,16 +40,23 @@ export const useStationsStore = defineStore('stationsStore', {
                  * Here to get the Date of first day of the week
                  * And then set other week days' Dates based on that.
                  */
-                let startOfWeek = null;
+                let startOfWeek: Date | null = null;
                 if (to == 'next') {
                     startOfWeek = this.stationCalendar?.start_date as Date;
                     startOfWeek.setDate(startOfWeek.getDate() + 7);
                 } else if (to === 'prev') {
                     startOfWeek = this.stationCalendar?.start_date as Date;
                     startOfWeek.setDate(startOfWeek.getDate() - 7);
+                } else if (to === 'selected') {
+                    startOfWeek = new Date(selectedDate);
+                    const dayOfWeek = startOfWeek.getDay();
+                    const difference = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+                    startOfWeek.setDate(startOfWeek.getDate() + difference);
                 } else {
-                    startOfWeek = desiredDate;
-                    startOfWeek.setDate(desiredDate.getDate() - desiredDate.getDay() + 1);
+                    startOfWeek = new Date(desiredDate);
+                    const dayOfWeek = startOfWeek.getDay();
+                    const difference = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+                    startOfWeek.setDate(startOfWeek.getDate() + difference);
                 }
 
                 for (let i = 0; i < 7; i++) {

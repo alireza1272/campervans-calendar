@@ -1,29 +1,24 @@
 <template>
-  <div class="relative w-full max-w-xs">
-    <div class="relative">
+  <div class="w-full max-w-[calc(100%-32px)]">
+    <div class="flex items-center">
       <input
           type="text"
           v-model="query"
-          @focus="showSuggestions=true"
-          placeholder="Find your station ..."
-          class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"/>
-      <span
-          v-if="query"
-          class="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-          @click="clearQuery">
-        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#405059">
-          <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
-        </svg>
+          placeholder="Type to search"
+          class="w-full border-none focus:outline-none bg-transparent text-xl text-white placeholder-white"/>
+      <span v-if="query" @click="clearQuery">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="white"><path
+            d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
       </span>
     </div>
 
-    <ul v-if="stationsStore.stations && query?.length > 0 && showSuggestions"
+    <ul v-if="stationsStore.stations && query?.length > 0"
         class="absolute w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto z-10">
       <li
           v-for="(suggestion, index) in stationsStore.stations"
           :key="index"
           @click="selectSuggestion(suggestion)"
-          class="p-2 cursor-pointer hover:bg-blue-500 hover:text-white">
+          class="p-2 cursor-pointer">
         {{ suggestion.name }}
       </li>
       <li v-show="stationsStore.stations?.length === 0" class="p-2 text-gray-500">
@@ -42,25 +37,17 @@ import {debounce} from '../utils/sharedUtils';
 const emit = defineEmits(['selectStation']);
 const query = ref('');
 const stationsStore = useStationsStore();
-const showSuggestions = ref(true);
 
 const fetchSuggestions = debounce((query: string) => {
   stationsStore.fetchStations(`name=${query.toLowerCase()}`);
 }, 300);
 
 watch(query, (newQuery: string) => {
-  if (newQuery.length > 0) {
-    showSuggestions.value = true;
-    fetchSuggestions(newQuery);
-  } else {
-    stationsStore.setStations(null);
-    showSuggestions.value = false;
-  }
+  fetchSuggestions(newQuery);
 });
 
 const selectSuggestion = (suggestion: IStation) => {
-  query.value = suggestion.name;
-  showSuggestions.value = false;
+  query.value = '';
   emit('selectStation', suggestion);
 };
 

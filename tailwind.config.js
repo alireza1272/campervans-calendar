@@ -13,6 +13,10 @@ export default {
                 'medium': '2px',
                 'thick': '4px',
             },
+            colors: {
+                'light-green': 'rgb(220 236 234)',
+                'primary-green': 'rgb(107 187 174)',
+            },
         },
     },
     plugins: [],
