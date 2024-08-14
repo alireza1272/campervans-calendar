@@ -3,7 +3,7 @@ import {IStationsState} from '../types/IStationsState';
 import {IBookingsEntity, IStation} from '../types/IStation';
 import {watch} from 'vue';
 import {IWeekDayInfo, IWeekInfo} from '../types/IWeekDayInfo';
-import {compareTwoDates, getWeekOrMonthName} from '../utils/calendatUtil';
+import {compareTwoDates, getWeekOrMonthName} from '../utils/calendarUtils.ts';
 import {BOOKING_TYPE} from '../utils/constants';
 import {useFetchAPI} from '../composables/useFetchAPI';
 

@@ -98,7 +98,7 @@
 import {useRoute} from 'vue-router';
 import {useBookingStore} from '../stores/bookingStore';
 import {useStationsStore} from '../stores/stationsStore';
-import {getDateDifferenceInDays} from '../utils/calendatUtil.ts';
+import {getDateDifferenceInDays} from '../utils/calendarUtils.ts';
 
 const bookingStore = useBookingStore();
 const stationStore = useStationsStore();
