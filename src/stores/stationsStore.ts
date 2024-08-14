@@ -48,7 +48,7 @@ export const useStationsStore = defineStore('stationsStore', {
                     startOfWeek = this.stationCalendar?.start_date as Date;
                     startOfWeek.setDate(startOfWeek.getDate() - 7);
                 } else if (to === 'selected') {
-                    startOfWeek = new Date(selectedDate);
+                    startOfWeek = new Date(selectedDate as Date);
                     const dayOfWeek = startOfWeek.getDay();
                     const difference = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
                     startOfWeek.setDate(startOfWeek.getDate() + difference);

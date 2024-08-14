@@ -36,7 +36,7 @@ import {debounce} from '../utils/sharedUtils';
 
 defineProps({
   suggestions: {
-    type: Array as () => IStation[],
+    type: Array as () => IStation[] | null,
     default: () => []
   }
 });
