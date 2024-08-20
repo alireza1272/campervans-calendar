@@ -8,7 +8,6 @@
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
     "test:unit": "jest",
-    "preview": "vite preview",
     "predeploy": "vue-tsc -b && vite build",
     "deploy": "gh-pages -d dist"
   },
