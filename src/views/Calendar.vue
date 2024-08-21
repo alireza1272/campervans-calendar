@@ -28,6 +28,36 @@ const selectDate = (modelData: Date) => {
   showDatePicker.value = false;
   stationsStore.setStationCalendar('selected', modelData);
 }
+
+const startDragBooking = (event: DragEvent, booking: IBookingsEntity, dayIndex: number) => {
+  if (event) {
+    event.dataTransfer.dropEffect = 'move';
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('bookingID', booking.id);
+    event.dataTransfer.setData('sourceDayIndex', dayIndex.toString());
+    console.log('on drag booking: ', booking.id, '\n targetDayIndex: ', dayIndex);
+  }
+}
+
+const onDropBooking = (event: DragEvent, targetDayIndex: number) => {
+  if (event && stationsStore) {
+    const bookingID = event.dataTransfer.getData('bookingID');
+    const sourceDayIndex = parseInt(event.dataTransfer.getData('sourceDayIndex'));
+
+    console.warn('on Drop booking: ', bookingID, '\n targetDayIndex: ', targetDayIndex);
+
+    if (sourceDayIndex === targetDayIndex) return;
+
+    const sourceDay = stationsStore.stationCalendar.days[sourceDayIndex];
+    const targetDay = stationsStore.stationCalendar.days[targetDayIndex];
+    const bookingIndex = sourceDay.bookings.findIndex((booking: IBookingsEntity) => booking.id === bookingID);
+
+    if (bookingIndex !== -1) {
+      const [movedBooking] = sourceDay.bookings.splice(bookingIndex, 1);
+      targetDay.bookings.push(movedBooking);
+    }
+  }
+}
 </script>
 
 <template>
@@ -49,7 +79,7 @@ const selectDate = (modelData: Date) => {
     <div
         class="w-full h-[56px] flex items-center justify-between relative border-t border-solid border-white pt-4 mt-4">
       <div v-if="stationsStore.stationCalendar?.month_name" class="flex gap-2 items-center relative">
-        <span @click="showDatePicker=!showDatePicker">
+        <span @click="showDatePicker=!showDatePicker" class="lg:cursor-pointer">
           <svg fill="white" height="24px" viewBox="0 -960 960 960" width="24px" xmlns="http://www.w3.org/2000/svg">
           <path
               d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400ZM480-240q-17 0-28.5-11.5T440-280q0-17 11.5-28.5T480-320q17 0 28.5 11.5T520-280q0 17-11.5 28.5T480-240Zm-160 0q-17 0-28.5-11.5T280-280q0-17 11.5-28.5T320-320q17 0 28.5 11.5T360-280q0 17-11.5 28.5T320-240Zm320 0q-17 0-28.5-11.5T600-280q0-17 11.5-28.5T640-320q17 0 28.5 11.5T680-280q0 17-11.5 28.5T640-240Z"/>
@@ -94,7 +124,7 @@ const selectDate = (modelData: Date) => {
 
   <div v-if="stationsStore.stationCalendar"
        class="grid grid-cols-7 gap-0.5 mt-4 h-[calc(100vh-176px)]">
-    <div v-for="weekDay of stationsStore.stationCalendar.days"
+    <div v-for="(weekDay, dayIndex) of stationsStore.stationCalendar.days"
          :key="weekDay.display_name"
          class="flex flex-col items-center bg-white shadow-md rounded-lg p-1 border border-gray-200">
       <div class="flex flex-col items-center w-full p-1 border-b border-gray-300">
@@ -105,12 +135,17 @@ const selectDate = (modelData: Date) => {
           {{ weekDay.date_number }}
         </div>
       </div>
-      <div v-if="weekDay.bookings?.length" class="w-full mt-2">
+      <div v-if="weekDay.bookings" class="w-full mt-2 h-full"
+           @drop="onDropBooking($event, dayIndex)"
+           @dragenter.prevent
+           @dragover.prevent>
         <router-link v-for="booking of weekDay.bookings"
                      :key="booking.id"
                      :class="bookingClass(booking)" :to="`/booking/${stationsStore.selectedStation?.id}/${booking.id}`"
                      class="w-full max-w-full flex justify-center items-center rounded-lg p-1 mb-1 text-sm font-medium
-                     text-white lg:p-2 lg:mb-2">
+                     text-white lg:p-2 lg:mb-2"
+                     draggable="true"
+                     @dragstart="startDragBooking($event, booking, dayIndex)">
           <span class="max-w-full h-auto text-white font-medium overflow-hidden">
             {{ booking.customerName }}
           </span>
