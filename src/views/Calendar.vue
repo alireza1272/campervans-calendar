@@ -11,7 +11,7 @@ const stationsStore = useStationsStore();
 const chooseSelection = (station: IStation) => {
   showStationSearch.value = false;
   stationsStore.setSelectedStation(station);
-  if (stationsStore.selectedStation?.bookings?.length) {
+  if (stationsStore.selectedStation?.bookings) {
     stationsStore.setStationCalendar();
   }
 }
@@ -30,28 +30,22 @@ const selectDate = (modelData: Date) => {
 }
 
 const startDragBooking = (event: DragEvent, booking: IBookingsEntity, dayIndex: number) => {
-  if (event) {
+  if (event.dataTransfer) {
     event.dataTransfer.dropEffect = 'move';
     event.dataTransfer.effectAllowed = 'move';
     event.dataTransfer.setData('bookingID', booking.id);
     event.dataTransfer.setData('sourceDayIndex', dayIndex.toString());
-    console.log('on drag booking: ', booking.id, '\n targetDayIndex: ', dayIndex);
   }
 }
 
 const onDropBooking = (event: DragEvent, targetDayIndex: number) => {
-  if (event && stationsStore) {
+  if (event.dataTransfer && stationsStore.stationCalendar) {
     const bookingID = event.dataTransfer.getData('bookingID');
     const sourceDayIndex = parseInt(event.dataTransfer.getData('sourceDayIndex'));
-
-    console.warn('on Drop booking: ', bookingID, '\n targetDayIndex: ', targetDayIndex);
-
     if (sourceDayIndex === targetDayIndex) return;
-
     const sourceDay = stationsStore.stationCalendar.days[sourceDayIndex];
     const targetDay = stationsStore.stationCalendar.days[targetDayIndex];
     const bookingIndex = sourceDay.bookings.findIndex((booking: IBookingsEntity) => booking.id === bookingID);
-
     if (bookingIndex !== -1) {
       const [movedBooking] = sourceDay.bookings.splice(bookingIndex, 1);
       targetDay.bookings.push(movedBooking);
@@ -61,10 +55,17 @@ const onDropBooking = (event: DragEvent, targetDayIndex: number) => {
 </script>
 
 <template>
+  <div v-if="!stationsStore.selectedStation"
+       class="h-[100px] w-full text-primary-green font-bold text-3xl text-center bg-primary-green flex justify-center">
+    <img src="https://roadsurfer.com/wp-content/themes/roadsurfer/_/img/logo/logo.svg" alt="roadsurfer"
+         class="max-w-[70%] lg:max-w-[30%]">
+  </div>
+
   <div
       class="bg-primary-green h-auto w-full p-4 lg:max-w-[80%] lg:mx-auto lg:mt-8 lg:rounded-lg"
       :class="{
-            'fixed top-1/2 transform -translate-y-1/2 lg:left-1/2 lg:transform lg:-translate-x-1/2': !stationsStore.stationCalendar,
+            'fixed top-1/2 transform -translate-y-1/2 lg:left-1/2 lg:transform lg:-translate-x-1/2':
+            !stationsStore.selectedStation,
         }">
     <div class="flex gap-2 items-center">
       <span>
@@ -121,10 +122,10 @@ const onDropBooking = (event: DragEvent, targetDayIndex: number) => {
       </div>
     </div>
   </div>
-
-  <div v-if="stationsStore.stationCalendar"
-       class="grid grid-cols-7 gap-0.5 mt-4 h-[calc(100vh-176px)]">
-    <div v-for="(weekDay, dayIndex) of stationsStore.stationCalendar.days"
+  <div
+      :class="stationsStore.stationCalendar ? 'grid grid-cols-7 gap-0.5 mt-4 h-[calc(100vh-176px)]' : 'flex justify-center w-full'">
+    <div v-if="stationsStore.stationCalendar"
+         v-for="(weekDay, dayIndex) of stationsStore.stationCalendar.days"
          :key="weekDay.display_name"
          class="flex flex-col items-center bg-white shadow-md rounded-lg p-1 border border-gray-200">
       <div class="flex flex-col items-center w-full p-1 border-b border-gray-300">
@@ -152,11 +153,9 @@ const onDropBooking = (event: DragEvent, targetDayIndex: number) => {
         </router-link>
       </div>
     </div>
-  </div>
-  <div v-else
-       class="h-[100px] w-full text-primary-green font-bold text-3xl text-center bg-primary-green flex justify-center">
-    <img src="https://roadsurfer.com/wp-content/themes/roadsurfer/_/img/logo/logo.svg" alt="roadsurfer"
-         class="max-w-[70%] lg:max-w-[30%]">
+    <div class="empty-state" v-else>
+      <p>There are no Bookings in this station!</p>
+    </div>
   </div>
 </template>
 

@@ -32,6 +32,7 @@ export const useStationsStore = defineStore('stationsStore', {
             }
         },
         setStationCalendar(to?: 'prev' | 'next' | 'selected', selectedDate?: Date) {
+            console.log('enter the setStationCalendar!');
             let weekInfo: IWeekInfo | null = null;
             if (this.selectedStation?.bookings?.length) {
                 const weekDaysInfo: IWeekDayInfo[] = []
